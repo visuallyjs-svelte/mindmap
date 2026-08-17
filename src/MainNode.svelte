@@ -1,6 +1,7 @@
 <script>
     import {CLASS_ADD_CHILD, LEFT, RIGHT} from "./definitions";
-    let { data, obj, addChild } = $props();
+    let { data, vertex, model } = $props();
+    import { addChild} from "./util"
 </script>
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
@@ -10,6 +11,6 @@
     {#if data.notes}
         <div class="vjs-mindmap-notes">{data.notes}</div>
     {/if}
-    <div class={CLASS_ADD_CHILD} data-direction={LEFT} onclick={() => addChild(obj, LEFT)}></div>
-    <div class={CLASS_ADD_CHILD} data-direction={RIGHT} onclick={() => addChild(obj, RIGHT)}></div>
+    <div class={CLASS_ADD_CHILD} data-direction={LEFT} onclick={() => addChild(model, vertex, LEFT)}></div>
+    <div class={CLASS_ADD_CHILD} data-direction={RIGHT} onclick={() => addChild(model, vertex, RIGHT)}></div>
 </div>

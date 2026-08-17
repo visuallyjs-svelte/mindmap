@@ -1,13 +1,12 @@
 <script>
     import { onMount } from "svelte";
     import './mindmap.css'
-    import { registerParser, registerExporter, uuid, EVENT_GRAPH_CLEARED, CONNECTOR_TYPE_STRAIGHT, AnchorLocations, EVENT_CANVAS_CLICK, EVENT_UNDO, EVENT_REDO } from "@visuallyjs/browser-ui"
+    import { registerParser, registerExporter, uuid, EVENT_GRAPH_CLEARED, CONNECTOR_TYPE_STRAIGHT, AnchorLocations, EVENT_CANVAS_CLICK, EVENT_UNDO, EVENT_REDO, BowtieLayout } from "@visuallyjs/browser-ui"
     import { SurfaceProvider, SurfaceComponent, ControlsComponent, MiniviewComponent } from "@visuallyjs/browser-ui-svelte";
-    import {CLASS_ADD_CHILD, CLASS_MINDMAP_DELETE, CLASS_MINDMAP_INFO, LEFT, RIGHT, SUBTOPIC} from "./definitions";
+    import {LEFT, RIGHT, SUBTOPIC} from "./definitions";
     import {MINDMAP_JSON, mindmapJsonExporter, mindmapJsonParser} from "./parser";
     import {MAIN} from "./definitions";
     import Inspector from "./Inspector.svelte"
-    import {MindmapLayout} from "./layout";
 
     // Sub-components for nodes
     import MainNode from './MainNode.svelte';
@@ -96,11 +95,16 @@
     const renderOptions = {
         elementsDraggable:false,
         zoomToFit:true,
-        logicalPorts:true,
-        refreshLayoutOnEdgeConnect:true,
+        relayoutOnEdgeConnect:true,
         consumeRightClick:false,
+        // Use a bowtie layout.
         layout:{
-            type:MindmapLayout.type,
+            type:BowtieLayout.type,
+            options:{
+                getRootNode:(ds) => ds.getNodes().filter(d => d.data.type === MAIN)[0],
+                getUpstream:(ds, v) => v.getAllEdges().filter(e => e.target.data.direction === LEFT).map(e => e.target),
+                getDownstream:(ds, v) => v.getAllEdges().filter(e => e.target.data.direction === RIGHT).map(e => e.target)
+            }
         },
         edges:{
             connector:{
